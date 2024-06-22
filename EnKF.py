@@ -7,7 +7,6 @@ import random
 from Calculation import Calculation
 
 # 使用時はcal = Calculationのインスタンス必要
-
 cal = Calculation()
 
 
@@ -38,6 +37,10 @@ class KF:
         ua = np.zeros((self.N, self.member))
         uf = np.zeros((self.N, self.member))
         dxf = np.zeros((self.N, self.member))
+        # アンサンブルメンバー作成
         for m in range(self.member):
-            uf = self.cal.Rk4()
+            # それぞれ初期に乱数擾乱加えてモデル回す
+            ua[:, m] = np.random.rand(self.N) + self.F
+            for i in range(self.time_step):
+                ua[:, m] = self.cal.Rk4(ua[:, m])
         for i in range(self.time_step):

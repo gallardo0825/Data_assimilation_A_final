@@ -33,6 +33,7 @@ class Datagenerater:
         pd.DataFrame(o_data).to_csv('o_data.csv')
 
 
-cal = Calculation()
-datagen = Datagenerater(cal)
-datagen.Data_generate()
+if __name__ == "__main__":
+    cal = Calculation()
+    datagen = Datagenerater(cal)
+    datagen.Data_generate()

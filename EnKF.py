@@ -8,6 +8,8 @@ from Calculation import Calculation
 
 # 使用時はcal = Calculationのインスタンス必要
 
+cal = Calculation()
+
 
 class KF:
     def __init__(self, calculation, obs_point=40, method=0):
@@ -33,39 +35,9 @@ class KF:
     def run_simulation(self):
         x_true = self.df_x_true.values
         y = self.df_y.values
-        x_a = x_true[1, :]
-        forecast, analysis = [], []
-
-        y, self.H, self.R = self.cal.obs_remove(
-            obs_point=self.obs_point, y=y, H=self.H, R=self.R, method=1)
-
+        ua = np.zeros((self.N, self.member))
+        uf = np.zeros((self.N, self.member))
+        dxf = np.zeros((self.N, self.member))
+        for m in range(self.member):
+            uf = self.cal.Rk4()
         for i in range(self.time_step):
-            x_f = self.cal.Rk4(x_a)
-            forecast.append(x_f)
-            JM = np.zeros((self.N, self.N))
-            for j in range(self.N):
-                JM[:, j] = (self.cal.Rk4(x_a + self.delta *
-                            self.IN[:, j]) - self.cal.Rk4(x_a)) / self.delta
-            Pf = self.tuning * JM @ self.Pa @ JM.T
-            K = Pf @ self.H.T @ np.linalg.pinv(self.H @ Pf @ self.H.T + self.R)
-            x_a = x_f + K @ (y[i, :] - self.H @ x_f)
-            analysis.append(x_a)
-            self.Pa = (np.eye(self.N) - K @ self.H) @ Pf
-
-        return self.results(forecast, analysis, x_true, y)
-
-    def results(self, forecast, analysis, x_true, y):
-        forecast = np.array(forecast)
-        analysis = np.array(analysis)
-        error_f, error_a = [], []
-
-        for i in range(self.time_step):
-            xf = forecast[i, :]
-            xa = analysis[i, :]
-            xt = x_true[i, :]
-            epsilon_f = xf - xt
-            epsilon_a = xa - xt
-            error_f.append(self.cal.RMS(epsilon_f))
-            error_a.append(self.cal.RMS(epsilon_a))
-
-        return error_a, error_f

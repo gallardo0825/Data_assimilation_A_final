@@ -8,9 +8,11 @@ from Calculation import Calculation
 
 # 使用時はcal = Calculationのインスタンス必要
 
+cal = Calculation()
+
 
 class KF:
-    def __init__(self, calculation, tuning=1.10, obs_point=40, method=0):
+    def __init__(self, calculation=cal, tuning=1.10, obs_point=40, method=0):
         self.F = 8.0
         self.N = 40
         self.dt = 0.05

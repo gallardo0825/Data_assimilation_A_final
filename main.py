@@ -7,8 +7,7 @@ import random
 from Calculation import Calculation
 from KF import KF
 
-cal = Calculation()
-kf = KF(calculation=cal)
+kf = KF()
 kf_a, kf_f = kf.run_simulation()
 ls = range(len(kf_a))
 plt.figure(figsize=(10, 6))

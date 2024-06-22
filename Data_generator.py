@@ -31,3 +31,8 @@ class Datagenerater:
         # Save data to CSV
         pd.DataFrame(t_data).to_csv('t_data.csv')
         pd.DataFrame(o_data).to_csv('o_data.csv')
+
+
+cal = Calculation()
+datagen = Datagenerater(cal)
+datagen.Data_generate()

@@ -6,12 +6,15 @@ import matplotlib.pyplot as plt
 import random
 from Calculation import Calculation
 from KF import KF
+from EnKF import EnKF
 
 kf = KF()
 kf_a, kf_f = kf.run_simulation()
-ls = range(len(kf_a))
+
+enkf = EnKF()
+enkf_a = enkf.run_simulation()
 plt.figure(figsize=(10, 6))
 plt.xlabel('Time step')
 plt.ylabel('RMS of absolute value of epsilon')
-plt.plot(ls, kf_a, label="KF")
+plt.plot(ls, enkf_a)
 plt.show()

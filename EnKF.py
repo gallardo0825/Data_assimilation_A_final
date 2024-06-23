@@ -10,8 +10,8 @@ from Calculation import Calculation
 cal = Calculation()
 
 
-class KF:
-    def __init__(self, calculation, obs_point=40, method=0):
+class EnKF:
+    def __init__(self, calculation=cal, obs_point=40, method=0):
         self.F = 8.0
         self.N = 40
         self.dt = 0.05
@@ -37,10 +37,23 @@ class KF:
         ua = np.zeros((self.N, self.member))
         uf = np.zeros((self.N, self.member))
         dxf = np.zeros((self.N, self.member))
+        results = []
         # アンサンブルメンバー作成
         for m in range(self.member):
             # それぞれ初期に乱数擾乱加えてモデル回す
             ua[:, m] = np.random.rand(self.N) + self.F
             for i in range(self.time_step):
                 ua[:, m] = self.cal.Rk4(ua[:, m])
+
         for i in range(self.time_step):
+            # forecast step
+            for m in range(self.member):
+                uf[:, m] = self.cal.Rk4(ua[:, m])
+            dxf = uf - np.mean(uf, axis=1, keepdims=True)
+            Pf = (dxf @ dxf.T) / (self.member - 1)
+
+            # analysis step
+            K = Pf @ self.H.T @ np.linalg.pinv(self.H @ Pf @ self.H.T + self.R)
+            for m in range(self.member):
+                ua[:, m] = uf[:, m] + \
+                    np.dot(K, (y[i, :] - np.dot(self.H, uf[:, m])))

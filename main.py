@@ -8,13 +8,11 @@ from Calculation import Calculation
 from KF import KF
 from EnKF import EnKF
 
-kf = KF()
-kf_a, kf_f = kf.run_simulation()
-
 enkf = EnKF()
 enkf_a = enkf.run_simulation()
+ls = range(len(enkf_a))
 plt.figure(figsize=(10, 6))
 plt.xlabel('Time step')
 plt.ylabel('RMS of absolute value of epsilon')
-plt.plot(ls, enkf_a)
+plt.plot(ls, enkf_a, label="EnKF")
 plt.show()

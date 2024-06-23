@@ -37,7 +37,7 @@ class EnKF:
         ua = np.zeros((self.N, self.member))
         uf = np.zeros((self.N, self.member))
         dxf = np.zeros((self.N, self.member))
-        results = []
+        error_f, error_a = [], []
         # アンサンブルメンバー作成
         for m in range(self.member):
             # それぞれ初期に乱数擾乱加えてモデル回す
@@ -57,3 +57,9 @@ class EnKF:
             for m in range(self.member):
                 ua[:, m] = uf[:, m] + \
                     np.dot(K, (y[i, :] - np.dot(self.H, uf[:, m])))
+            error_a.append(np.linalg.norm(
+                x_true[i, :] - np.mean(ua, axis=1)) / np.sqrt(self.N))
+            error_f.append(np.linalg.norm(
+                x_true[i, :] - np.mean(uf, axis=1)) / np.sqrt(self.N))
+
+        return error_a, error_f

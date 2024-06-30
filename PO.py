@@ -3,11 +3,11 @@ import numpy as np
 from scipy.linalg import inv, sqrtm
 from numpy import identity as eye
 import matplotlib.pyplot as plt
-import random
 from Calculation import Calculation
 
 # 使用時はcal = Calculationのインスタンス必要
 cal = Calculation()
+np.random.seed(314)
 
 
 class PO:
@@ -49,7 +49,7 @@ class PO:
             # forecast step
             for m in range(self.member):
                 uf[:, m] = self.cal.Rk4(ua[:, m])
-            dxf = uf - np.mean(uf, axis=1, keepdims=True)
+            dxf = uf - np.mean(uf, axis=0, keepdims=True)
             Pf = (dxf @ dxf.T) / (self.member - 1)
 
             # analysis step
@@ -59,8 +59,8 @@ class PO:
                     K @ ((y[i, :] + np.random.rand(self.N)) -
                          (self.H @ uf[:, m]))
             error_a.append(np.linalg.norm(
-                x_true[i, :] - np.mean(ua, axis=1)) / np.sqrt(self.N))
+                x_true[i, :] - np.mean(ua, axis=0)) / np.sqrt(self.N))
             error_f.append(np.linalg.norm(
-                x_true[i, :] - np.mean(uf, axis=1)) / np.sqrt(self.N))
+                x_true[i, :] - np.mean(uf, axis=0)) / np.sqrt(self.N))
 
         return error_a, error_f

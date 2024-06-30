@@ -1,3 +1,5 @@
 import numpy as np
-ua = np.zeros((2, 5))
-print(ua[1, :])
+
+uf = np.arange(1, 26).reshape(5, 5)
+dXf = uf - np.mean(uf, axis=1, keepdims=True)
+print(dXf)

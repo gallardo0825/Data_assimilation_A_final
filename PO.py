@@ -53,7 +53,7 @@ class PO:
             Pf = (dxf @ dxf.T) / (self.member - 1)
 
             # analysis step
-            K = Pf @ self.H.T @ np.linalg.pinv(self.H @ Pf @ self.H.T + self.R)
+            K = Pf @ self.H.T @ np.linalg.inv(self.H @ Pf @ self.H.T + self.R)
             for m in range(self.member):
                 ua[:, m] = uf[:, m] + \
                     K @ ((y[i, :] + np.random.rand(self.N)) -

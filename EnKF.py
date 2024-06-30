@@ -53,10 +53,10 @@ class EnKF:
             Pf = (dxf @ dxf.T) / (self.member - 1)
 
             # analysis step
-            K = Pf @ self.H.T @ np.linalg.pinv(self.H @ Pf @ self.H.T + self.R)
+            K = Pf @ self.H.T @ np.linalg.inv(self.H @ Pf @ self.H.T + self.R)
             for m in range(self.member):
-                ua[:, m] = uf[:, m] + \
-                    np.dot(K, (y[i, :] - np.dot(self.H, uf[:, m])))
+                ua[:, m] = uf[:, m] + K @ (y[i, :] -
+                                           (self.H @ uf[:, m]))
             error_a.append(np.linalg.norm(
                 x_true[i, :] - np.mean(ua, axis=1)) / np.sqrt(self.N))
             error_f.append(np.linalg.norm(

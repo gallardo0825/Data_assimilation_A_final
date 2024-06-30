@@ -9,7 +9,16 @@ from Calculation import Calculation
 from KF import KF
 from EnKF import EnKF
 from PO import PO
-
+# %%
+enkf = EnKF()
+enkf_1, enkf_2 = enkf.run_simulation()
+ls = range(len(enkf_1))
+plt.figure(figsize=(10, 6))
+plt.xlabel('Time step')
+plt.ylabel('RMS of absolute value of epsilon')
+plt.plot(ls, enkf_2, label="EnKF")
+plt.legend()
+plt.show()
 # %%
 po = PO()
 po_1, po_2 = po.run_simulation()

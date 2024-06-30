@@ -56,8 +56,8 @@ class PO:
             K = Pf @ self.H.T @ np.linalg.pinv(self.H @ Pf @ self.H.T + self.R)
             for m in range(self.member):
                 ua[:, m] = uf[:, m] + \
-                    np.dot(K, (y[i, :] + np.random.rand(self.N) -
-                           np.dot(self.H, uf[:, m])))
+                    K @ ((y[i, :] + np.random.rand(self.N)) -
+                         (self.H @ uf[:, m]))
             error_a.append(np.linalg.norm(
                 x_true[i, :] - np.mean(ua, axis=1)) / np.sqrt(self.N))
             error_f.append(np.linalg.norm(

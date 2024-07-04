@@ -78,3 +78,6 @@ class Calculation:
 
         else:
             print("Wrong method was selected")
+
+    def localization(self, i, j, dist=2.0):
+        return np.exp(-(i - j) ** 2 / dist)

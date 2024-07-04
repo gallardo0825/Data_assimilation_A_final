@@ -1,0 +1,71 @@
+import pandas as pd
+import numpy as np
+from scipy.linalg import inv, sqrtm
+from numpy import identity as eye
+import matplotlib.pyplot as plt
+from calculation import Calculation
+
+# 使用時はcal = Calculationのインスタンス必要
+cal = Calculation()
+
+
+class SRFwl:
+    def __init__(self, calculation=cal, obs_point=40, method=0):
+        self.F = 8.0
+        self.N = 40
+        self.dt = 0.05
+        self.days = 365
+        self.day_steps = int(0.20 / self.dt)
+        self.time_step = self.days * self.day_steps
+        self.ls_time_step = [i for i in range(self.time_step)]
+        self.IN = np.eye(self.N)
+        self.obs_point = obs_point
+        self.df_x_true = pd.read_csv('t_data.csv', header=0, index_col=0)
+        self.df_y = pd.read_csv('o_data.csv', header=0, index_col=0)
+        self.H = np.eye(self.N)
+        self.R = np.eye(self.N)
+        self.cal = calculation
+        self.method = method
+        self.delta = 0.001
+        self.member = 200
+        # 以下新変数
+        self.IN = np.eye(self.N)
+
+        def run_simulation(self):
+            x_true = self.df_x_true.values
+            y = self.df_y.values
+            ua = np.zeros((self.N, self.member))
+            uf = np.zeros((self.N, self.member))
+            ua_mean = np.zeros(self.N)
+            uf_mean = np.zeros(self.N)
+            dxf = np.zeros((self.N, self.member))
+            dyf = np.zeros((self.N, self.member))
+            dxa = np.zeros((self.N, self.member))
+            error_f, error_a = [], []
+            for m in range(self.member):
+                ua[:, m] = np.random.rand(self.N) + self.F
+                for i in range(self.time_step):
+                    ua[:, m] = self.cal.Rk4(ua[:, m])
+            for i in range(self.time_step):
+                # forecast step
+                uf[:, m] = self.cal.Rk4(ua[:, m])
+                # 平均計算（axis=1方向の平均）
+                mean_uf = np.zeros(self.N)
+                for n in range(self.N):
+                    mean_uf[n] = np.mean(uf[n, :])
+                # dxf計算
+                for m in range(self.member):
+                    dxf[:, m] = uf[:, m] - mean_uf
+                dyf = self.H * dxf
+
+                # analysis step
+                K = dxf @ dyf.T @ inv(dyf @ dyf.T + (self.member - 1) * self.R)
+                K_fluc = np.eye(
+                    dyf.shape[1]) - dyf.T @ inv(dyf @ dyf.T + (self.member - 1) * self.R) @ dyf
+                ua_mean = uf_mean + K @ (y[i, :] - self.H @ uf_mean)
+                dxa = dxf @ sqrtm(K_fluc)
+                error_a.append(np.linalg.norm(
+                    x_true[i, :] - np.mean(ua, axis=1)) / np.sqrt(self.N))
+                error_f.append(np.linalg.norm(
+                    x_true[i, :] - np.mean(uf, axis=1)) / np.sqrt(self.N))
+            return error_a, error_f

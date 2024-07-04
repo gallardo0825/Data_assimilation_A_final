@@ -49,8 +49,13 @@ class SRF:
             for i in range(self.time_step):
                 # forecast step
                 uf[:, m] = self.cal.Rk4(ua[:, m])
-                uf_mean = np.mean(uf, axis=1, keepdims=True)
-                dxf = uf - uf_mean
+                # 平均計算（axis=1方向の平均）
+                mean_uf = np.zeros(self.N)
+                for n in range(self.N):
+                    mean_uf[n] = np.mean(uf[n, :])
+                # dxf計算
+                for m in range(self.member):
+                    dxf[:, m] = uf[:, m] - mean_uf
                 dyf = self.H * dxf
 
                 # analysis step

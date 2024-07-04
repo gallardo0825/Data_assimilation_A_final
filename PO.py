@@ -48,8 +48,13 @@ class PO:
             # forecast step
             for m in range(self.member):
                 uf[:, m] = self.cal.Rk4(ua[:, m])
-                # axis =1の方向で合っている？
-            dxf = uf - np.mean(uf, axis=1, keepdims=True)
+            # 平均計算（axis=1方向の平均）
+            mean_uf = np.zeros(self.N)
+            for n in range(self.N):
+                mean_uf[n] = np.mean(uf[n, :])
+            # dxf計算
+            for m in range(self.member):
+                dxf[:, m] = uf[:, m] - mean_uf
             Pf = (dxf @ dxf.T) / (self.member - 1)
 
             # analysis step
@@ -59,10 +64,8 @@ class PO:
                 ua[:, m] = uf[:, m] + \
                     K @ ((y[i, :] + np.random.rand(self.N)) -
                          (self.H @ uf[:, m]))
-            # axis =1の方向で合っている？
             error_a.append(np.linalg.norm(
                 x_true[i, :] - np.mean(ua, axis=1)) / np.sqrt(self.N))
-            # axis =1の方向で合っている？
             error_f.append(np.linalg.norm(
                 x_true[i, :] - np.mean(uf, axis=1)) / np.sqrt(self.N))
 

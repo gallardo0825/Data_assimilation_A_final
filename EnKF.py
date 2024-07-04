@@ -48,7 +48,13 @@ class EnKF:
             # forecast step
             for m in range(self.member):
                 uf[:, m] = self.cal.Rk4(ua[:, m])
-            dxf = uf - np.mean(uf, axis=1, keepdims=True)
+            # 平均計算（axis=1方向の平均）
+            mean_uf = np.zeros(self.N)
+            for n in range(self.N):
+                mean_uf[n] = np.mean(uf[n, :])
+            # dxf計算
+            for m in range(self.member):
+                dxf[:, m] = uf[:, m] - mean_uf
             Pf = (dxf @ dxf.T) / (self.member - 1)
 
             # analysis step

@@ -3,6 +3,7 @@ import numpy as np
 from scipy.linalg import inv, sqrtm
 from numpy import identity as eye
 import matplotlib.pyplot as plt
+import random
 from Calculation import Calculation
 
 
@@ -30,9 +31,3 @@ class Datagenerater:
         # Save data to CSV
         pd.DataFrame(t_data).to_csv('t_data.csv')
         pd.DataFrame(o_data).to_csv('o_data.csv')
-
-
-if __name__ == "__main__":
-    cal = Calculation()
-    datagen = Datagenerater(cal)
-    datagen.Data_generate()

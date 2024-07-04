@@ -7,7 +7,6 @@ from Calculation import Calculation
 
 # 使用時はcal = Calculationのインスタンス必要
 cal = Calculation()
-np.random.seed(314)
 
 
 class EnKF:

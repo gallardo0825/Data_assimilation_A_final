@@ -7,8 +7,6 @@ from Calculation import Calculation
 
 # 使用時はcal = Calculationのインスタンス必要
 cal = Calculation()
-np.random.seed(314)
-
 
 class PO:
     def __init__(self, calculation=cal, obs_point=40, method=0):

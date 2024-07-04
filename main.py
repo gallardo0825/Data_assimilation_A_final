@@ -5,7 +5,7 @@ from scipy.linalg import inv, sqrtm
 from numpy import identity as eye
 import matplotlib.pyplot as plt
 import random
-from Calculation import Calculation
+from calculation import Calculation
 from EnKF import EnKF
 from PO import PO
 from SRF import SRF

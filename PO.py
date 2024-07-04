@@ -3,7 +3,7 @@ import numpy as np
 from scipy.linalg import inv, sqrtm
 from numpy import identity as eye
 import matplotlib.pyplot as plt
-from Calculation import Calculation
+from calculation import Calculation
 
 # 使用時はcal = Calculationのインスタンス必要
 cal = Calculation()

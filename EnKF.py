@@ -48,7 +48,7 @@ class EnKF:
             # forecast step
             for m in range(self.member):
                 uf[:, m] = self.cal.Rk4(ua[:, m])
-            dxf = uf - np.mean(uf, axis=1)
+            dxf = uf - np.mean(uf, axis=1, keepdims=True)
             Pf = (dxf @ dxf.T) / (self.member - 1)
 
             # analysis step

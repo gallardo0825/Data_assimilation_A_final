@@ -8,6 +8,7 @@ from Calculation import Calculation
 # 使用時はcal = Calculationのインスタンス必要
 cal = Calculation()
 
+
 class PO:
     def __init__(self, calculation=cal, obs_point=40, method=0):
         self.F = 8.0
@@ -48,7 +49,7 @@ class PO:
             for m in range(self.member):
                 uf[:, m] = self.cal.Rk4(ua[:, m])
                 # axis =1の方向で合っている？
-            dxf = uf - np.mean(uf, axis=1)
+            dxf = uf - np.mean(uf, axis=1, keepdims=True)
             Pf = (dxf @ dxf.T) / (self.member - 1)
 
             # analysis step

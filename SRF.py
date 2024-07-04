@@ -8,7 +8,8 @@ from Calculation import Calculation
 # 使用時はcal = Calculationのインスタンス必要
 cal = Calculation()
 
-class PO:
+
+class SRF:
     def __init__(self, calculation=cal, obs_point=40, method=0):
         self.F = 8.0
         self.N = 40
@@ -38,3 +39,28 @@ class PO:
             ua_mean = np.zeros(self.N)
             uf_mean = np.zeros(self.N)
             dxf = np.zeros((self.N, self.member))
+            dyf = np.zeros((self.N, self.member))
+            dxa = np.zeros((self.N, self.member))
+            error_f, error_a = [], []
+            for m in range(self.member):
+                ua[:, m] = np.random.rand(self.N) + self.F
+                for i in range(self.time_step):
+                    ua[:, m] = self.cal.Rk4(ua[:, m])
+            for i in range(self.time_step):
+                # forecast step
+                uf[:, m] = self.cal.Rk4(ua[:, m])
+                uf_mean = np.mean(uf, axis=1, keepdims=True)
+                dxf = uf - uf_mean
+                dyf = self.H * dxf
+
+                # analysis step
+                K = dxf @ dyf.T @ inv(dyf @ dyf.T + (self.member - 1) * self.R)
+                K_fluc = np.eye(
+                    dyf.shape[1]) - dyf.T @ inv(dyf @ dyf.T + (self.member - 1) * self.R) @ dyf
+                ua_mean = uf_mean + K @ (y[i, :] - self.H @ uf_mean)
+                dxa = dxf @ sqrtm(K_fluc)
+                error_a.append(np.linalg.norm(
+                    x_true[i, :] - np.mean(ua, axis=1)) / np.sqrt(self.N))
+                error_f.append(np.linalg.norm(
+                    x_true[i, :] - np.mean(uf, axis=1)) / np.sqrt(self.N))
+            return error_a, error_f

@@ -5,6 +5,8 @@ from numpy import identity as eye
 import matplotlib.pyplot as plt
 import random
 from Calculation import Calculation
+# 使用時はcal = Calculationのインスタンス必要
+cal = Calculation()
 
 
 class Datagenerater:
@@ -31,3 +33,7 @@ class Datagenerater:
         # Save data to CSV
         pd.DataFrame(t_data).to_csv('t_data.csv')
         pd.DataFrame(o_data).to_csv('o_data.csv')
+
+
+datagen = Datagenerater(cal)
+datagen.Data_generate()
